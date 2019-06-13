@@ -98,8 +98,14 @@ server.post('/api/login', (req, res) => {
     }
 });
 
-server.get('/api/users', (req, res) => {
-
+server.get('/api/users', checkToken, (req, res) => {
+    db('users')
+    .then(user => {
+        res.status(200).json(user)
+    })
+    .catch(err => {
+        res.status(500).json({message: "Error getting user."})
+    })
 });
 
 // Create the Token function
@@ -122,8 +128,22 @@ function generateToken(user) {
 
 // Middleware
 
-function nameHere(req, res, next) {
+function checkToken (req, res, next) {
+    const token = req.headers.authorization;
 
+    if (token) {
+        jwt.verify(token, secret.jwtSecret, (err, decoded) => {
+            if (err) {
+                res.status(401).json({message: "Invalid Token!"})
+            } else {
+                req.user = {username: decoded.username}
+                console.log(req.user)
+                next();
+            }   
+        })
+    } else {
+        res.status(400).json({message: "Token required!"})
+    }
 };
 
 
