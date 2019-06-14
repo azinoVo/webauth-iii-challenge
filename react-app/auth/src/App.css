@@ -7,6 +7,10 @@ a {
     padding:1%;
 }
 
-.register {
+.credential-form {
     margin-top: 3%;
+}
+
+.active {
+    background-color:lightblue;
 }

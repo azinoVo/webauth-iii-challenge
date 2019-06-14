@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class SignUp extends Component {
     constructor() {
@@ -15,7 +16,7 @@ class SignUp extends Component {
 
     render() {
         return (
-            <div className='register'>
+            <div className='credential-form'>
                 SIGNUP FORM HERE
                 <form onSubmit={this.register} autoComplete="off">
                     <input
@@ -46,21 +47,39 @@ class SignUp extends Component {
             </div>
         );
     }
-    
+
 
     onChange = event => {
-        console.log(this.state);
+        console.log(this.state.credentials);
 
         this.setState({
-            [event.target.name]: event.target.value
+            credentials: {
+                ...this.state.credentials,
+                [event.target.name]: event.target.value
+            }
         })
-
     }
 
     register = event => {
         event.preventDefault();
+        const credentials = {
+            username: this.state.credentials.username,
+            password: this.state.credentials.password,
+            department: this.state.credentials.department
+        }
 
+        axios
+            .post('http://localhost:8000/api/register', credentials)
+            .then(res => {
+                console.log(res);
 
+                this.props.history.push('/signin')
+
+            })
+            .catch(err => {
+                console.log(err);
+
+            })
     }
 
 }
